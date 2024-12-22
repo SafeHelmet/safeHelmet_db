@@ -10,18 +10,36 @@ Table worker {
   surname varchar [not null]       // Cognome del lavoratore
 }
 
+Table specialization {
+  id integer [primary key, unique] // Identificativo unico della specializzazione
+  name varchar [not null]          // Nome della specializzazione (es. muratore, elettricista)
+}
+
+Table worker_specialization {
+  id integer [primary key, unique] // Identificativo unico dell'assegnazione
+  worker_id integer [not null]     // Lavoratore con la specializzazione
+  specialization_id integer [not null] // Specializzazione del lavoratore
+}
+
 Table helmet {
   id integer [primary key, unique] // Identificativo unico dell'elmetto
+  category_id integer [not null]   // Categoria dell'elmetto
   created_at timestamp [default: `CURRENT_TIMESTAMP`] // Data di creazione
 }
+
+Table helmet_category {
+  id integer [primary key, unique] // Identificativo unico della categoria
+  name varchar [not null]          // Nome della categoria (es. standard, avanzato)
+}
+
 
 Table reading {
   id integer [primary key, unique] // Identificativo unico della lettura
   read_at timestamp [not null, default: `CURRENT_TIMESTAMP`] // Data e ora della lettura
   helmet_id integer [not null]      // Elmetto associato alla lettura
-  sensor1 number [not null]         // Valore del sensore 1
-  sensor2 number [not null]         // Valore del sensore 2
-  sensor3 number [not null]         // Valore del sensore 3
+  sensor1 number         // Valore del sensore 1
+  sensor2 number         // Valore del sensore 2
+  sensor3 number         // Valore del sensore 3
 }
 
 Table worker_helmet_assignment {
@@ -49,6 +67,9 @@ Table worksite_boss_assignment {
 }
 
 // Relazioni
+Ref: worker_specialization.worker_id > worker.id // Relazione tra lavoratore e specializzazione
+Ref: worker_specialization.specialization_id > specialization.id // Relazione tra specializzazione e lavoratore
+Ref: helmet.category_id > helmet_category.id // Un elmetto appartiene a una categoria
 Ref: worker_helmet_assignment.worker_id > worker.id // Un'assegnazione lega un lavoratore a un elmetto
 Ref: worker_helmet_assignment.helmet_id > helmet.id // Un'assegnazione lega un elmetto a un lavoratore
 Ref: worker_worksite_assignment.worker_id > worker.id // Un'assegnazione lega un lavoratore a un cantiere
