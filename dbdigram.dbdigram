@@ -1,0 +1,58 @@
+Table worksite {
+  id integer [primary key, unique] // Identificativo unico del cantiere
+  name varchar [not null]          // Nome del cantiere
+  created_at timestamp [default: `CURRENT_TIMESTAMP`] // Data di creazione
+}
+
+Table worker {
+  id integer [primary key, unique] // Identificativo unico del lavoratore
+  name varchar [not null]          // Nome del lavoratore
+  surname varchar [not null]       // Cognome del lavoratore
+}
+
+Table helmet {
+  id integer [primary key, unique] // Identificativo unico dell'elmetto
+  created_at timestamp [default: `CURRENT_TIMESTAMP`] // Data di creazione
+}
+
+Table reading {
+  id integer [primary key, unique] // Identificativo unico della lettura
+  read_at timestamp [not null, default: `CURRENT_TIMESTAMP`] // Data e ora della lettura
+  helmet_id integer [not null]      // Elmetto associato alla lettura
+  sensor1 number [not null]         // Valore del sensore 1
+  sensor2 number [not null]         // Valore del sensore 2
+  sensor3 number [not null]         // Valore del sensore 3
+}
+
+Table worker_helmet_assignment {
+  id integer [primary key, unique] // Identificativo unico dell'assegnazione
+  worker_id integer [not null]     // Lavoratore che utilizza l'elmetto
+  helmet_id integer [not null]     // Elmetto utilizzato
+  assigned_at timestamp [not null, default: `CURRENT_TIMESTAMP`] // Data di assegnazione
+  released_at timestamp            // Data di rilascio (null se in uso)
+}
+
+Table worker_worksite_assignment {
+  id integer [primary key, unique] // Identificativo unico dell'assegnazione
+  worker_id integer [not null]     // Lavoratore assegnato al cantiere
+  worksite_id integer [not null]   // Cantiere di assegnazione
+  assigned_at timestamp [not null, default: `CURRENT_TIMESTAMP`] // Data di assegnazione
+  released_at timestamp            // Data di rilascio (null se in uso)
+}
+
+Table worksite_boss_assignment {
+  id integer [primary key, unique] // Identificativo unico dell'assegnazione
+  boss_id integer [not null]       // Lavoratore assegnato come capo
+  worksite_id integer [not null]   // Cantiere in cui è responsabile
+  assigned_at timestamp [not null, default: `CURRENT_TIMESTAMP`] // Data di inizio ruolo
+  released_at timestamp            // Data di fine ruolo (null se attivo)
+}
+
+// Relazioni
+Ref: worker_helmet_assignment.worker_id > worker.id // Un'assegnazione lega un lavoratore a un elmetto
+Ref: worker_helmet_assignment.helmet_id > helmet.id // Un'assegnazione lega un elmetto a un lavoratore
+Ref: worker_worksite_assignment.worker_id > worker.id // Un'assegnazione lega un lavoratore a un cantiere
+Ref: worker_worksite_assignment.worksite_id > worksite.id // Un'assegnazione lega un cantiere a un lavoratore
+Ref: worksite_boss_assignment.boss_id > worker.id // Un'assegnazione lega un lavoratore come capo a un cantiere
+Ref: worksite_boss_assignment.worksite_id > worksite.id // Un'assegnazione lega un cantiere a un capo
+Ref: reading.helmet_id > helmet.id // Una lettura è associata a un elmetto
