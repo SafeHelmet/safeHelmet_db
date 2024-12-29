@@ -1,6 +1,6 @@
 # safeHelmet_db
 
-![Esempio di immagine](./diagddddram.png)
+![Esempio di immagine](./diagram.png)
 
 40 byte ogni 15 minuti per ogni casco
 sono 40kb al mese, di letture casco. considerando 10 ore di letture al giorno con 25 giorni di lavoro effettivo al mese
