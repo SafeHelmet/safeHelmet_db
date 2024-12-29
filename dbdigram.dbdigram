@@ -2,9 +2,19 @@ Table worksite {
   id integer [primary key, unique] // Identificativo unico del cantiere
   name varchar [not null]          // Nome del cantiere
   created_at timestamp [default: `CURRENT_TIMESTAMP`] // Data di creazione
+  latitude dobule
+  longitude dobule
+  start_date_of_work date
+  end_date_of_work date
 }
 
 Table worker {
+  id integer [primary key, unique] // Identificativo unico del lavoratore
+  name varchar [not null]          // Nome del lavoratore
+  surname varchar [not null]       // Cognome del lavoratore
+}
+
+Table boss {
   id integer [primary key, unique] // Identificativo unico del lavoratore
   name varchar [not null]          // Nome del lavoratore
   surname varchar [not null]       // Cognome del lavoratore
@@ -24,14 +34,12 @@ Table worker_specialization {
 Table helmet {
   id integer [primary key, unique] // Identificativo unico dell'elmetto
   category_id integer [not null]   // Categoria dell'elmetto
-  created_at timestamp [default: `CURRENT_TIMESTAMP`] // Data di creazione
 }
 
 Table helmet_category {
   id integer [primary key, unique] // Identificativo unico della categoria
   name varchar [not null]          // Nome della categoria (es. standard, avanzato)
 }
-
 
 Table reading {
   id integer [primary key, unique] // Identificativo unico della lettura
@@ -44,12 +52,12 @@ Table reading {
 }
 
 
-Table worker_worksite_assignment {
+Table worker_attendance {
   id integer [primary key, unique] // Identificativo unico dell'assegnazione
   worker_id integer [not null]     // Lavoratore assegnato al cantiere
   worksite_id integer [not null]   // Cantiere di assegnazione
-  assigned_at timestamp [not null, default: `CURRENT_TIMESTAMP`] // Data di assegnazione
-  released_at timestamp            // Data di rilascio (null se in uso)
+  start_at timestamp [not null, default: `CURRENT_TIMESTAMP`] // Data di assegnazione
+  end_at timestamp            // Data di rilascio (null se in uso)
   helmet_id integer
 }
 
@@ -61,13 +69,29 @@ Table worksite_boss_assignment {
   released_at timestamp            // Data di fine ruolo (null se attivo)
 }
 
+
+Table worksite_worker_assignment {
+  id integer [primary key, unique] // Identificativo unico dell'assegnazione
+  worksite_id integer [not null]   // Cantiere in cui è responsabile
+  worker_id integer [not null]
+  assigned_by integer [not null]       // Lavoratore assegnato come capo
+  assigned_at timestamp [not null, default: `CURRENT_TIMESTAMP`] // Data di inizio ruolo
+  released_at timestamp            // Data di fine ruolo (null se attivo)
+}
+
 // Relazioni
 Ref: worker_specialization.worker_id > worker.id // Relazione tra lavoratore e specializzazione
 Ref: worker_specialization.specialization_id > specialization.id // Relazione tra specializzazione e lavoratore
 Ref: helmet.category_id > helmet_category.id // Un elmetto appartiene a una categoria
-Ref: worker_worksite_assignment.helmet_id > helmet.id // Un'assegnazione lega un elmetto a un lavoratore
-Ref: worker_worksite_assignment.worker_id > worker.id // Un'assegnazione lega un lavoratore a un cantiere
-Ref: worker_worksite_assignment.worksite_id > worksite.id // Un'assegnazione lega un cantiere a un lavoratore
-Ref: worksite_boss_assignment.boss_id > worker.id // Un'assegnazione lega un lavoratore come capo a un cantiere
+Ref: worker_attendance.helmet_id > helmet.id // Un'assegnazione lega un elmetto a un lavoratore
+Ref: worker_attendance.worker_id > worker.id // Un'assegnazione lega un lavoratore a un cantiere
+Ref: worker_attendance.worksite_id > worksite.id // Un'assegnazione lega un cantiere a un lavoratore
+Ref: worksite_boss_assignment.boss_id > boss.id // Un'assegnazione lega un lavoratore come capo a un cantiere
 Ref: worksite_boss_assignment.worksite_id > worksite.id // Un'assegnazione lega un cantiere a un capo
 Ref: reading.helmet_id > helmet.id // Una lettura è associata a un elmetto
+
+Ref: "worksite_worker_assignment"."assigned_by" < "boss"."id"
+
+Ref: "worksite_worker_assignment"."worksite_id" < "worksite"."id"
+
+Ref: "worksite_worker_assignment"."worker_id" < "worker"."id"
