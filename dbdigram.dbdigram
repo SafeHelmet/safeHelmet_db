@@ -45,10 +45,26 @@ Table reading {
   id integer [primary key, unique] // Identificativo unico della lettura
   read_at timestamp [not null, default: `CURRENT_TIMESTAMP`] // Data e ora della lettura
   helmet_id integer [not null]      // Elmetto associato alla lettura
-  sensor1 number         // Valore del sensore 1
-  sensor2 number         // Valore del sensore 2
-  sensor3 number         // Valore del sensore 3
-  anomalous boolean
+  temperature number         
+  humidity number         
+  brightness number
+  // gas
+  smoke boolean
+  gas boolean
+  CO boolean
+  // wereable
+  gas_mask boolean
+  welding_mask boolean
+  // threshold
+  temperature_threshold number         
+  humidity_threshold number         
+  brightness_threshold number
+  // xyz (yugioh)
+  x number
+  y number
+  z number
+  g_max number
+  incorrect_posture_perc number
 }
 
 
