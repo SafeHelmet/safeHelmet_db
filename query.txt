@@ -1,5 +1,0 @@
-reportostica del mese
-
-preso un intervallo di data su quel specifico cantiere fare una media dei valori letti
-
-
